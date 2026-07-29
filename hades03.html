@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hadès.03</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wine-deep:#3a0d14;
+    --wine:#5c1a24;
+    --wine-light:#7c2735;
+    --gold:#d9a86c;
+    --gold-soft:#e8c9a0;
+    --cream:#f3e6da;
+    --paper:#f7ecd9;
+    --ink:#4a1119;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:
+      radial-gradient(ellipse at 20% 10%, var(--wine-light) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, #4a1119 0%, transparent 55%),
+      linear-gradient(160deg, var(--wine-deep) 0%, var(--wine) 55%, #2a080d 100%);
+    font-family:'Cormorant Garamond', 'Georgia', serif;
+    color:var(--cream);
+    overflow:hidden;
+    height:100vh;
+    height:100dvh;
+    width:100vw;
+  }
+  #petals{ position:fixed; inset:0; pointer-events:none; z-index:1; }
+  .petal{
+    position:absolute; top:-40px;
+    font-size:20px; opacity:0.85;
+    animation-name:fall, sway;
+    animation-timing-function:linear, ease-in-out;
+    animation-iteration-count:infinite, infinite;
+    filter: drop-shadow(0 0 3px rgba(0,0,0,0.3));
+  }
+  @keyframes fall{ 0%{transform:translateY(-5vh) rotate(0deg);} 100%{transform:translateY(105vh) rotate(360deg);} }
+  @keyframes sway{ 0%,100%{margin-left:0px;} 50%{margin-left:40px;} }
+
+  #stage{
+    position:relative; z-index:2; height:100vh; height:100dvh; width:100vw;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{
+    max-width:640px; width:100%; text-align:center; padding:40px 34px;
+    background:rgba(20,4,7,0.35);
+    border:1px solid rgba(217,168,108,0.35);
+    border-radius:6px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    animation:fadein 0.6s ease;
+  }
+  @keyframes fadein{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+  .eyebrow{
+    font-family:'Playfair Display', serif; letter-spacing:0.25em; text-transform:uppercase;
+    font-size:12px; color:var(--gold); margin-bottom:14px; opacity:0.85;
+  }
+  h1{
+    font-family:'Playfair Display', serif; font-weight:700;
+    font-size:clamp(24px,4vw,34px); margin:0 0 18px; color:var(--gold-soft); line-height:1.25;
+  }
+  p.lead{ font-size:clamp(18px,2.6vw,22px); line-height:1.6; margin:0 0 28px; color:var(--cream); }
+  .buttons{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:24px; }
+  button{
+    font-family:'Cormorant Garamond', serif; font-size:19px; font-weight:600; letter-spacing:0.03em;
+    padding:13px 30px; border-radius:3px; border:1px solid var(--gold);
+    background:transparent; color:var(--gold-soft); cursor:pointer;
+    transition:background 0.25s, color 0.25s;
+  }
+  button:hover{ background:var(--gold); color:#2a080d; }
+  button.primary{ background:var(--gold); color:#2a080d; }
+  button.primary:hover{ background:var(--gold-soft); }
+
+  /* ---------- Enveloppe ---------- */
+  .envelope-zone{ display:flex; flex-direction:column; align-items:center; gap:22px; }
+  .envelope{
+    position:relative; width:280px; height:180px; cursor:pointer;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5));
+  }
+  .env-body{
+    position:absolute; inset:0;
+    background:linear-gradient(160deg, #ecd9c3, #d8bd97);
+    border-radius:4px;
+  }
+  .env-shadow-left{
+    position:absolute; left:0; top:0; width:50%; height:100%;
+    background:linear-gradient(120deg, rgba(0,0,0,0.12), transparent 60%);
+  }
+  .env-flap{
+    position:absolute; top:0; left:0; width:100%; height:55%;
+    background:linear-gradient(160deg, #d8bd97, #c9a876);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transition: transform 0.9s cubic-bezier(.4,.6,.2,1);
+    z-index:3;
+  }
+  .envelope.open .env-flap{
+    transform: rotateX(-165deg);
+  }
+  .seal{
+    position:absolute; top:38%; left:50%; transform:translate(-50%,-50%);
+    width:52px; height:52px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #b5384d, #7c1f2e 70%);
+    box-shadow:0 3px 8px rgba(0,0,0,0.4), inset 0 0 6px rgba(0,0,0,0.3);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display', serif; color:var(--gold-soft); font-size:20px;
+    z-index:4; transition:opacity 0.4s, transform 0.4s;
+  }
+  .envelope.open .seal{ opacity:0; transform:translate(-50%,-50%) scale(0.4) rotate(25deg); }
+  .letter-peek{
+    position:absolute; left:8%; top:8%; width:84%; height:80%;
+    background:var(--paper); border-radius:2px;
+    z-index:2; opacity:0;
+    transition: transform 0.9s ease 0.15s, opacity 0.5s ease 0.15s;
+    transform: translateY(0);
+  }
+  .envelope.open .letter-peek{
+    opacity:1;
+    transform: translateY(-60px);
+  }
+  .hint{ font-size:14px; color:var(--gold); opacity:0.75; letter-spacing:0.06em; }
+
+  /* ---------- Lettre ---------- */
+  .letter-card{
+    max-width:600px; width:100%;
+    background:var(--paper);
+    color:var(--ink);
+    padding:48px 42px;
+    border-radius:3px;
+    box-shadow:0 25px 70px rgba(0,0,0,0.5);
+    text-align:left;
+    max-height:78vh;
+    overflow-y:auto;
+    animation:fadein 0.6s ease;
+  }
+  .letter-card::-webkit-scrollbar{ width:6px; }
+  .letter-card::-webkit-scrollbar-thumb{ background:var(--wine-light); border-radius:3px; }
+  .letter-heading{
+    font-family:'Playfair Display', serif; font-style:italic; color:var(--wine);
+    font-size:15px; letter-spacing:0.05em; margin-bottom:22px; opacity:0.8;
+  }
+  .letter-para{
+    font-size:20px; line-height:1.75; margin:0 0 20px; opacity:0;
+    animation:reveal 0.9s ease forwards;
+  }
+  @keyframes reveal{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .letter-buttons{ text-align:center; margin-top:16px; }
+  .letter-buttons button{
+    border-color:var(--wine); color:var(--wine);
+  }
+  .letter-buttons button:hover, .letter-buttons button.primary{
+    background:var(--wine); color:var(--paper);
+  }
+  .letter-buttons button.primary:hover{ background:var(--wine-light); }
+
+  /* ---------- Sceau final ---------- */
+  .final-seal-wrap{ display:flex; justify-content:center; margin-bottom:24px; }
+  .final-seal{
+    width:110px; height:110px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #c24a5f, #7c1f2e 75%);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5), inset 0 0 12px rgba(0,0,0,0.35);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display', serif; color:var(--gold-soft); font-size:36px;
+    transform:scale(0) rotate(-30deg);
+    animation:stamp 0.7s cubic-bezier(.3,1.4,.5,1) forwards;
+    animation-delay:0.2s;
+  }
+  @keyframes stamp{ to{ transform:scale(1) rotate(0deg); } }
+  .signature{
+    margin-top:8px; font-family:'Playfair Display', serif; color:var(--gold);
+    font-size:17px; letter-spacing:0.05em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .petal{ animation:none; display:none; }
+  }
+
+  .music-toggle{
+    position:fixed; top:18px; right:18px; z-index:10;
+    width:42px; height:42px; border-radius:50%;
+    background:rgba(20,4,7,0.45);
+    border:1px solid rgba(217,168,108,0.45);
+    color:var(--gold-soft);
+    font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; padding:0;
+    transition:background 0.25s;
+  }
+  .music-toggle:hover{ background:rgba(217,168,108,0.25); }
+</style>
+</head>
+<body>
+
+<div id="petals"></div>
+<button class="music-toggle" id="musicToggle" title="Couper / activer la musique">🔈</button>
+<div id="stage"></div>
+
+<script>
+/* ---------- pétales qui tombent ---------- */
+const petalContainer = document.getElementById('petals');
+const petalEmojis = ['🌹','🥀','🌸'];
+function spawnPetal(){
+  const p = document.createElement('div');
+  p.className = 'petal';
+  p.textContent = petalEmojis[Math.floor(Math.random()*petalEmojis.length)];
+  p.style.left = Math.random()*100 + 'vw';
+  const duration = 7 + Math.random()*6;
+  const swayDuration = 3 + Math.random()*3;
+  p.style.animationDuration = duration + 's, ' + swayDuration + 's';
+  p.style.fontSize = (14 + Math.random()*14) + 'px';
+  p.style.opacity = 0.5 + Math.random()*0.5;
+  petalContainer.appendChild(p);
+  setTimeout(()=>p.remove(), duration*1000 + 200);
+}
+setInterval(spawnPetal, 350);
+for(let i=0;i<12;i++) setTimeout(spawnPetal, i*120);
+
+/* ---------- musique douce (générée, sans fichier externe) ---------- */
+let audioCtx = null;
+let masterGain = null;
+let musicOn = false;
+let musicStarted = false;
+let arpTimer = null;
+let droneNodes = [];
+
+const arpNotes = [329.63, 392.00, 493.88, 587.33, 493.88, 392.00]; // Em-ish, doux
+let arpIndex = 0;
+
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.18;
+  masterGain.connect(audioCtx.destination);
+}
+
+function playArpNote(freq, time){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 1400;
+  osc.type = 'triangle';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, time);
+  gain.gain.linearRampToValueAtTime(0.5, time + 0.15);
+  gain.gain.linearRampToValueAtTime(0, time + 1.3);
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(masterGain);
+  osc.start(time);
+  osc.stop(time + 1.4);
+}
+
+function scheduleArp(){
+  const now = audioCtx.currentTime;
+  playArpNote(arpNotes[arpIndex % arpNotes.length], now);
+  arpIndex++;
+  arpTimer = setTimeout(scheduleArp, 900);
+}
+
+function startDrone(){
+  [130.81, 164.81].forEach((freq, i)=>{
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = 0.05;
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start();
+    droneNodes.push({osc, gain});
+  });
+}
+
+function startMusic(){
+  initAudio();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  if(!musicStarted){
+    startDrone();
+    scheduleArp();
+    musicStarted = true;
+  }
+  musicOn = true;
+  masterGain.gain.setTargetAtTime(0.18, audioCtx.currentTime, 0.5);
+  document.getElementById('musicToggle').textContent = '🔊';
+}
+
+function stopMusicSound(){
+  musicOn = false;
+  if(masterGain) masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.4);
+  document.getElementById('musicToggle').textContent = '🔈';
+}
+
+document.getElementById('musicToggle').addEventListener('click', ()=>{
+  if(!musicStarted || !musicOn){ startMusic(); }
+  else{ stopMusicSound(); }
+});
+
+/* ---------- moteur ---------- */
+const stage = document.getElementById('stage');
+function card(innerHTML, extraClass){
+  stage.innerHTML = `<div class="card ${extraClass||''}">${innerHTML}</div>`;
+}
+
+/* ---------- écran 1 : intro ---------- */
+function screenIntro(){
+  card(`
+    <div class="eyebrow">Système d'accueil</div>
+    <h1>Je suis Hadès.03</h1>
+    <p class="lead">Une nouvelle version, développée par Bérenger.<br>Cette fois, aucun piège. Juste une lettre, sincère du début à la fin.</p>
+    <div class="buttons"><button class="primary" id="b1">Continuer</button></div>
+  `);
+  document.getElementById('b1').onclick = ()=>{ startMusic(); screenEnvelope(); };
+}
+
+/* ---------- écran 2 : enveloppe ---------- */
+function screenEnvelope(){
+  stage.innerHTML = `
+    <div class="envelope-zone">
+      <div class="envelope" id="env">
+        <div class="env-body"></div>
+        <div class="env-shadow-left"></div>
+        <div class="letter-peek"></div>
+        <div class="env-flap"></div>
+        <div class="seal">H</div>
+      </div>
+      <div class="hint">Clique sur l'enveloppe pour l'ouvrir</div>
+    </div>
+  `;
+  const env = document.getElementById('env');
+  env.addEventListener('click', ()=>{
+    if(env.classList.contains('open')) return;
+    env.classList.add('open');
+    setTimeout(screenLetter, 1100);
+  });
+}
+
+/* ---------- écran 3 : lettre progressive ---------- */
+const paragraphs = [
+  "Ma belle,",
+  "Il y a des choses que je n'ai jamais su te dire à voix haute, alors je les écris — c'est plus facile ainsi, et tu mérites qu'elles soient posées quelque part, noir sur blanc, pour ne jamais s'effacer.",
+  "Je pense à toutes les fois où j'étais physiquement là, mais ailleurs dans ma tête. Aux soirs où tu avais besoin de moi et où je n'ai pas su être présent comme il fallait. Je suis désolé pour ces absences-là, les plus difficiles à pardonner parce qu'elles ne se voient pas.",
+  "Je pense aussi aux mots que j'ai laissés sortir trop vite, sans réfléchir, dans des moments où j'étais fatigué ou frustré — et qui n'avaient rien à faire dirigés vers toi. Tu ne les méritais pas. Je le sais, et je m'en veux encore.",
+  "Ce que je retiens surtout, c'est que malgré tout ça, tu es restée. Tu as eu de la patience quand je n'en méritais pas toujours. Tu as continué à croire en nous dans des moments où j'aurais compris que tu doutes. Ça, je ne le prends jamais pour acquis.",
+  "Alors voici ce que je te promets, simplement : je vais faire l'effort d'être plus présent, de mieux choisir mes mots, et de te montrer — pas seulement te dire — à quel point tu comptes pour moi.",
+  "Je veux te rendre heureuse. Pas pour un jour, pas pour te faire plaisir une fois, mais comme un projet de tous les jours, avec mes maladresses en moins et mon attention en plus.",
+  "Tu es la femme avec qui je veux construire tout ce qui vient après — les bons jours comme les plus difficiles.",
+  "Je t'aime, sincèrement, entièrement, et je compte bien te le prouver."
+];
+let letterStep = 0;
+
+function screenLetter(){
+  letterStep = 0;
+  renderLetter();
+}
+
+function renderLetter(){
+  const shown = paragraphs.slice(0, letterStep+1);
+  const html = shown.map((p, i) => `<p class="letter-para" style="animation-delay:${i===letterStep ? '0s':'0s'}">${p}</p>`).join('');
+  const isLast = letterStep >= paragraphs.length - 1;
+  stage.innerHTML = `
+    <div class="letter-card">
+      <div class="letter-heading">Pour toi</div>
+      ${html}
+      <div class="letter-buttons">
+        <button class="primary" id="next">${isLast ? 'Terminer' : 'Continuer à lire'}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('next').onclick = ()=>{
+    if(isLast){ screenFinal(); }
+    else{ letterStep++; renderLetter(); document.querySelector('.letter-card').scrollTop = document.querySelector('.letter-card').scrollHeight; }
+  };
+}
+
+/* ---------- écran 4 : sceau final ---------- */
+function screenFinal(){
+  card(`
+    <div class="final-seal-wrap"><div class="final-seal">H</div></div>
+    <p class="lead">Avec tout mon amour,</p>
+    <div class="signature">Bérenger — Hadès.03 🌹</div>
+  `);
+}
+
+/* ---------- lancement ---------- */
+screenIntro();
+</script>
+
+</body>
+</html>
