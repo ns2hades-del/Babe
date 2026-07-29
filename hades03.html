@@ -28,7 +28,6 @@
     color:var(--cream);
     overflow:hidden;
     height:100vh;
-    height:100dvh;
     width:100vw;
   }
   #petals{ position:fixed; inset:0; pointer-events:none; z-index:1; }
@@ -44,7 +43,7 @@
   @keyframes sway{ 0%,100%{margin-left:0px;} 50%{margin-left:40px;} }
 
   #stage{
-    position:relative; z-index:2; height:100vh; height:100dvh; width:100vw;
+    position:relative; z-index:2; height:100vh; width:100vw;
     display:flex; align-items:center; justify-content:center; padding:24px;
   }
   .card{
@@ -53,7 +52,6 @@
     border:1px solid rgba(217,168,108,0.35);
     border-radius:6px;
     box-shadow:0 20px 60px rgba(0,0,0,0.45);
-    -webkit-backdrop-filter: blur(3px);
     backdrop-filter: blur(3px);
     animation:fadein 0.6s ease;
   }
